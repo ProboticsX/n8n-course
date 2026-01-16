@@ -1,0 +1,145 @@
+{
+  "name": "Section 3: Gmail",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "authentication": "airtableTokenApi",
+        "baseId": {
+          "__rl": true,
+          "value": "https://airtable.com/appWV7XFy6wG2WYQD/tblQjtaWD8pqc7gKj/viwbRZVGt2Zftozx3?blocks=hide",
+          "mode": "url"
+        },
+        "tableId": {
+          "__rl": true,
+          "value": "https://airtable.com/appWV7XFy6wG2WYQD/tblQjtaWD8pqc7gKj/viwbRZVGt2Zftozx3?blocks=hide",
+          "mode": "url"
+        },
+        "triggerField": "Created",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.airtableTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "30a86c75-8e3c-42b4-8bba-f5e9976217a2",
+      "name": "Airtable Trigger",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "lvyD7BdjB1IX736n",
+          "name": "Airtable Personal Access Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o",
+          "mode": "list",
+          "cachedResultName": "GPT-4O"
+        },
+        "responses": {
+          "values": [
+            {
+              "content": "=You are responsible for customer orders. Your task is to collect incoming information about new orders and create a clear summary that will be sent via email to the team. The email should be signed with \"Customer Success Team\".\n\nHere are the details of the customer orders:\n\nOrder Number:{{ $json.fields['Order Number'] }}\nCustomer:{{ $json.fields.Customer }}\nProduct:{{ $json.fields.Product }}\nQuantity:{{ $json.fields.Quantity }}\nPrice:{{ $json.fields.Price }}\nDate:{{ $json.fields.Date }}\nStatus:{{ $json.fields.Status }}\n\nPlease provide the following output parameters:\n\nemail_subject\nemail_content\n\nmake a clean body with new lines if needed"
+            }
+          ]
+        },
+        "builtInTools": {},
+        "options": {
+          "textFormat": {
+            "textOptions": {
+              "type": "json_object"
+            }
+          }
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 2.1,
+      "position": [
+        208,
+        0
+      ],
+      "id": "6c1e1f4b-ffe6-449b-b521-c863b2e38229",
+      "name": "Message a model",
+      "credentials": {
+        "openAiApi": {
+          "id": "mZtwwv4qEsqQF74d",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "jainshubham0403@gmail.com",
+        "subject": "={{ $json.output[0].content[0].text.email_subject }}",
+        "emailType": "text",
+        "message": "={{ $json.output[0].content[0].text.email_content }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        560,
+        0
+      ],
+      "id": "e9eb6e15-281d-4c8a-be42-798b4cfe0528",
+      "name": "Send a message",
+      "webhookId": "0d8f2f6d-9f50-4a6e-8928-76c3236bd60b",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "LzJaGcUtatEB97DX",
+          "name": "Gmail account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Airtable Trigger": {
+      "main": [
+        [
+          {
+            "node": "Message a model",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Message a model": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "versionId": "b4ae58ed-a7e8-462f-ab5f-88f7d5e8224e",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "0ebf38dcdd1ae52af1f6a500356751ea7fc5173098ba39dcd678b1789f234f88"
+  },
+  "id": "S5x88xw0XXUKl0YBdAojV",
+  "tags": []
+}

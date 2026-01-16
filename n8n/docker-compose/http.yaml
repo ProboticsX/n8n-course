@@ -1,0 +1,29 @@
+version: "3"
+ 
+services:
+  n8n:
+    image: n8nio/n8n:latest
+    restart: unless-stopped
+    ports:
+      - "5678:5678"
+    environment:
+      - N8N_BASIC_AUTH_ACTIVE=true
+      - N8N_BASIC_AUTH_USER=admin
+      - N8N_BASIC_AUTH_PASSWORD=admin123
+      - GENERIC_TIMEZONE=Asia/Kolkata
+      - N8N_SECURE_COOKIE=false
+ 
+      # 🔴 CRITICAL for public IP access
+      - N8N_HOST=129.80.33.242
+      - N8N_PORT=5678
+      - N8N_PROTOCOL=http
+      - WEBHOOK_URL=http://129.80.33.242:5678
+      - N8N_EDITOR_BASE_URL=http://129.80.33.242:5678
+ 
+      # 🔧 Helps WebSocket stability
+      - N8N_TRUST_PROXY=true
+    volumes:
+      - n8n_data:/home/node/.n8n
+ 
+volumes:
+  n8n_data:
