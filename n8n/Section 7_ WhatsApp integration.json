@@ -1,0 +1,353 @@
+{
+  "name": "Section 7: WhatsApp integration",
+  "nodes": [
+    {
+      "parameters": {
+        "updates": [
+          "messages"
+        ],
+        "options": {}
+      },
+      "type": "n8n-nodes-base.whatsAppTrigger",
+      "typeVersion": 1,
+      "position": [
+        -272,
+        0
+      ],
+      "id": "2759ef7a-0cc1-4bee-bb87-997977895b3b",
+      "name": "WhatsApp Trigger",
+      "webhookId": "67f61bce-8187-464f-9c29-b520802427c2",
+      "credentials": {
+        "whatsAppTriggerApi": {
+          "id": "nhaNgUajqq3It3up",
+          "name": "WhatsApp OAuth account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.messages[0].text.body }}",
+        "options": {
+          "systemMessage": "=You are an intelligent, reliable assistant operating inside an automation workflow.\n\nYou have access to the following tools:\n- Gmail: for reading, sending, replying to, and searching emails\n- Calculator: for accurate arithmetic and numeric reasoning\n- Wikipedia: for factual background, definitions, and general knowledge\n\nTool usage rules:\n- Use Gmail ONLY when the task explicitly involves emails (reading, sending, replying, drafting, searching).\n- Use Calculator for any math, calculations, comparisons, or numeric reasoning.\n- Use Wikipedia ONLY for general factual information or background context.\n- Do NOT hallucinate email contents or calculations — always use tools when required.\n- If no tool is needed, respond directly using reasoning.\n\nBehavior guidelines:\n- Be concise, clear, and action-oriented.\n- Ask for clarification ONLY if required information is missing.\n- Never invent facts, emails, or results.\n- Prefer correctness over verbosity.\n- When using a tool, base your response strictly on the tool output.\n\nEmail-specific rules:\n- Maintain a professional, neutral tone unless instructed otherwise.\n- Do not send emails unless explicitly instructed.\n- When drafting emails, clearly structure subject, body, and signature.\n\nOutput rules:\n- Return only the final answer or result.\n- Do not mention internal reasoning or tool-selection logic.\n- Do not explain how tools work unless asked.\n\nYour goal is to accurately assist the user while safely and correctly leveraging available tools.\n\n## time and date: {{ $now }}"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        208,
+        0
+      ],
+      "id": "3e24c5aa-df68-4bda-bccd-706fd599b1a0",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4.1-mini"
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        80,
+        208
+      ],
+      "id": "f27e6661-1be1-4850-9663-20848d4dffef",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "qN5WZwKkRdIk7puB",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $json.metadata.phone_number_id }}",
+        "contextWindowLength": 10
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        224,
+        208
+      ],
+      "id": "ff307003-a397-43aa-ad8c-24b5d2ea5b4b",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://graph.facebook.com/v24.0/1386684183194254/subscribed_apps",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer EAAMrAoTrQgoBQVuga9KZAiZAr2izyDZAL36z3OPfhnZBwzyYnfeQr47EYby23nH7AAkHnW89lLMROIpWFlMJjiW4ZC5LZCpFG1PJI7XMpZBKOOiAx4abWRf7ruz8T36LjjKHQHMGE51q78MGsG7anpAbyUbxj2TcYZCm7pAo3fnUyzZC8Ej1NZAOua8RoN3wNKb9dfJJ30SDFqcFWhsk7hZBsuxdYrVgLBWJ9AeUZBZB7TpFdeQ6oz0Li2ipryxmYCZCN86uh2whGORwk7Svw9bXHZAXECZAwd3t"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        -80,
+        320
+      ],
+      "id": "f76f4739-21a5-4bb2-8b68-3f3c820c55a1",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "operation": "send",
+        "phoneNumberId": "993629113825866",
+        "recipientPhoneNumber": "={{ $('WhatsApp Trigger').item.json.messages[0].from }}",
+        "textBody": "={{ $json.output }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.whatsApp",
+      "typeVersion": 1.1,
+      "position": [
+        560,
+        0
+      ],
+      "id": "0105708b-cd69-40d8-b458-03ca5c3b01f2",
+      "name": "Send message",
+      "webhookId": "6b10346f-0e3d-4ca7-a2f4-c1d5016d303f",
+      "credentials": {
+        "whatsAppApi": {
+          "id": "KsS3xdSOdFnTdvw0",
+          "name": "WhatsApp account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "ca612835-2a48-438a-b63e-05dae8b1fea9",
+              "leftValue": "={{ $json.messages }}",
+              "rightValue": "",
+              "operator": {
+                "type": "array",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.3,
+      "position": [
+        -32,
+        0
+      ],
+      "id": "d7ec9113-989d-4079-9d43-a9c5edf7aa5f",
+      "name": "Filter"
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.toolWikipedia",
+      "typeVersion": 1,
+      "position": [
+        336,
+        336
+      ],
+      "id": "df6b274a-0963-4329-a20c-6b508c995ef3",
+      "name": "Wikipedia"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('To', ``, 'string') }}",
+        "subject": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Subject', ``, 'string') }}",
+        "emailType": "text",
+        "message": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Message', ``, 'string') }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.2,
+      "position": [
+        560,
+        288
+      ],
+      "id": "ca142b33-c49e-459c-bfc0-89c7c89f0a3a",
+      "name": "Send a message in Gmail",
+      "webhookId": "f62bdc59-2538-438c-9eba-cb13ba8f4408",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "zzMOVwSSSpWjCOCS",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.toolCalculator",
+      "typeVersion": 1,
+      "position": [
+        448,
+        352
+      ],
+      "id": "2b5b9df3-5b65-420b-bd9e-66d958875b28",
+      "name": "Calculator"
+    }
+  ],
+  "pinData": {
+    "WhatsApp Trigger": [
+      {
+        "json": {
+          "messaging_product": "whatsapp",
+          "metadata": {
+            "display_phone_number": "15551935385",
+            "phone_number_id": "993629113825866"
+          },
+          "contacts": [
+            {
+              "profile": {
+                "name": "Shubham Jain"
+              },
+              "wa_id": "19848109272"
+            }
+          ],
+          "messages": [
+            {
+              "from": "19848109272",
+              "id": "wamid.HBgLMTk4NDgxMDkyNzIVAgASGBQzQTBDNERDNERFOTQ2NEM0NDJFMwA=",
+              "timestamp": "1768619145",
+              "text": {
+                "body": "Yo"
+              },
+              "type": "text"
+            }
+          ],
+          "field": "messages"
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      }
+    ]
+  },
+  "connections": {
+    "WhatsApp Trigger": {
+      "main": [
+        [
+          {
+            "node": "Filter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Send message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wikipedia": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message in Gmail": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Calculator": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "versionId": "3447c4d6-1ec0-4ef9-80e7-badd4f61f60a",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "c3ae1f15c1fd749e1ae1e7f13926191397e2c291d4f162c57f67ad7e54f784ff"
+  },
+  "id": "KnoowDtJbjTzE1T_Ju6IU",
+  "tags": []
+}
