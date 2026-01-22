@@ -1,0 +1,120 @@
+{
+  "name": "Section 9: MCP Host",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        0,
+        0
+      ],
+      "id": "63df0b4d-6ed4-4c38-8af7-2a68011dbe14",
+      "name": "When chat message received",
+      "webhookId": "38161f4c-2fab-497c-afbb-316ca19fdc73"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        208,
+        0
+      ],
+      "id": "1db8523a-863a-4c5f-958d-6c8698e978f9",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-5.2",
+          "mode": "list",
+          "cachedResultName": "gpt-5.2"
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        80,
+        208
+      ],
+      "id": "8020c814-ea4a-49fd-ae39-0103b1af1dbc",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "qN5WZwKkRdIk7puB",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "endpointUrl": "https://n8n.newspresso.org/mcp/6dd5ade8-dbb6-498d-9468-ffeb3f7dc152",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.mcpClientTool",
+      "typeVersion": 1.2,
+      "position": [
+        176,
+        208
+      ],
+      "id": "c5295cc2-8796-462c-9b83-c303c9262390",
+      "name": "MCP Client"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "MCP Client": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "versionId": "fc86b052-7f9c-427f-ac6f-0f2fc7d4676b",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "c3ae1f15c1fd749e1ae1e7f13926191397e2c291d4f162c57f67ad7e54f784ff"
+  },
+  "id": "aGxoQcmlBzvBVKcviv3He",
+  "tags": []
+}

@@ -1,0 +1,209 @@
+{
+  "name": "Section 9: MCP Servers",
+  "nodes": [
+    {
+      "parameters": {
+        "path": "6dd5ade8-dbb6-498d-9468-ffeb3f7dc152"
+      },
+      "type": "@n8n/n8n-nodes-langchain.mcpTrigger",
+      "typeVersion": 2,
+      "position": [
+        0,
+        0
+      ],
+      "id": "57c54768-07f7-4699-951d-3b38df4f0141",
+      "name": "MCP Server Trigger",
+      "webhookId": "6dd5ade8-dbb6-498d-9468-ffeb3f7dc152"
+    },
+    {
+      "parameters": {
+        "calendar": {
+          "__rl": true,
+          "value": "jainshubham0403@gmail.com",
+          "mode": "list",
+          "cachedResultName": "jainshubham0403@gmail.com"
+        },
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.googleCalendarTool",
+      "typeVersion": 1.3,
+      "position": [
+        96,
+        208
+      ],
+      "id": "40344efc-b99d-40be-9df2-5216e3f4c7e0",
+      "name": "Create an event in Google Calendar",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "ylLvrPblaIDcEsmK",
+          "name": "Google Calendar account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('To', ``, 'string') }}",
+        "subject": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Subject', ``, 'string') }}",
+        "emailType": "text",
+        "message": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Message', ``, 'string') }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.2,
+      "position": [
+        192,
+        304
+      ],
+      "id": "c72d2103-6f94-40ca-867d-0c7981127f5d",
+      "name": "Send a message in Gmail",
+      "webhookId": "161a6da1-8665-43e5-8a1e-86153bc9b229",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "kNKjF2YVUlmEVFnf",
+          "name": "Gmail account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "calendar": {
+          "__rl": true,
+          "value": "jainshubham0403@gmail.com",
+          "mode": "list",
+          "cachedResultName": "jainshubham0403@gmail.com"
+        },
+        "limit": 5,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleCalendarTool",
+      "typeVersion": 1.3,
+      "position": [
+        288,
+        400
+      ],
+      "id": "18e5fac9-3a0e-4c0d-9b95-46c0ec9adc96",
+      "name": "Get many events in Google Calendar",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "ylLvrPblaIDcEsmK",
+          "name": "Google Calendar account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.toolCalculator",
+      "typeVersion": 1,
+      "position": [
+        384,
+        336
+      ],
+      "id": "495710e8-3067-4776-81b1-6063f6b3610c",
+      "name": "Calculator"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1d74KOkVXK1Vn3pZh2s2q7ogobgCtZ6xVsxa5b1zCph4",
+          "mode": "list",
+          "cachedResultName": "Created using n8n",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1d74KOkVXK1Vn3pZh2s2q7ogobgCtZ6xVsxa5b1zCph4/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1d74KOkVXK1Vn3pZh2s2q7ogobgCtZ6xVsxa5b1zCph4/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        384,
+        336
+      ],
+      "id": "3c059bc1-6aa0-44c4-9cc3-d5d094a2b985",
+      "name": "Get row(s) in sheet in Google Sheets",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "bM5rJWjtx2N0tqwj",
+          "name": "Google Sheets account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Create an event in Google Calendar": {
+      "ai_tool": [
+        [
+          {
+            "node": "MCP Server Trigger",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message in Gmail": {
+      "ai_tool": [
+        [
+          {
+            "node": "MCP Server Trigger",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get many events in Google Calendar": {
+      "ai_tool": [
+        [
+          {
+            "node": "MCP Server Trigger",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Calculator": {
+      "ai_tool": [
+        [
+          {
+            "node": "MCP Server Trigger",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet in Google Sheets": {
+      "ai_tool": [
+        [
+          {
+            "node": "MCP Server Trigger",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "versionId": "2a68b798-6303-4a2c-a3d8-8d9696344a40",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "c3ae1f15c1fd749e1ae1e7f13926191397e2c291d4f162c57f67ad7e54f784ff"
+  },
+  "id": "niRB-_BTAx80CvaWBG_g9",
+  "tags": []
+}
