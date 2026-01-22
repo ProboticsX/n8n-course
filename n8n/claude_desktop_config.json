@@ -1,0 +1,13 @@
+{
+    "mcpServers": {
+        "n8n": {
+            "command": "npx",
+            "args": [
+                "-y",
+                "supergateway",
+                "--sse",
+                "https://n8n.newspresso.org/mcp/6dd5ade8-dbb6-498d-9468-ffeb3f7dc152"
+            ]
+        }
+    }
+}
