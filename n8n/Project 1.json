@@ -1,0 +1,287 @@
+{
+  "name": "Project 1",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "lead-intake",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "66ac66b5-5ccd-4dd2-890e-bc2e1bcc5c57",
+      "name": "Webhook",
+      "webhookId": "2ec9f79d-1912-4e0b-b727-5bedad7e8aea"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "bc7955de-c6e4-4139-b9c8-2caade520047",
+              "leftValue": "={{$json.isValid}}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        416,
+        0
+      ],
+      "id": "7b477452-864a-4732-a833-3f51eedced28",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "jsCode": "for (let i = 0; i < items.length; i++) {\n  const root = items[i].json || {};\n\n  // ✅ This is the key fix:\n  // If webhook payload is nested under \"body\", use that; otherwise fallback to root\n  const data = root.body ?? root;\n\n  const errors = [];\n\n  // Validation\n  if (!data.name || String(data.name).trim() === \"\") {\n    errors.push(\"Name is required\");\n  }\n\n  const email = data.email ? String(data.email).trim() : \"\";\n  if (!email || !/^\\S+@\\S+\\.\\S+$/.test(email)) {\n    errors.push(\"Valid email is required\");\n  }\n\n  if (!data.source || String(data.source).trim() === \"\") {\n    errors.push(\"Source is required\");\n  }\n\n  // Normalization / cleaning\n  const cleaned = {\n    name: data.name ? String(data.name).trim() : \"\",\n    email: email.toLowerCase(),\n    source: data.source ? String(data.source).trim().toLowerCase().replace(/\\s+/g, \"_\") : \"\",\n    message: data.message ? String(data.message).trim() : \"\",\n    receivedAt: new Date().toISOString(),\n    requestId: \"req_\" + Math.random().toString(36).slice(2, 9),\n  };\n\n  // Put results back on the item\n  items[i].json.cleaned = cleaned;\n  items[i].json.isValid = errors.length === 0;\n  items[i].json.errors = errors;\n}\n\nreturn items;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        208,
+        0
+      ],
+      "id": "22584b25-99be-469b-9de2-abd659cf8348",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1d74KOkVXK1Vn3pZh2s2q7ogobgCtZ6xVsxa5b1zCph4",
+          "mode": "list",
+          "cachedResultName": "Created using n8n",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1d74KOkVXK1Vn3pZh2s2q7ogobgCtZ6xVsxa5b1zCph4/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1191029306,
+          "mode": "list",
+          "cachedResultName": "Project1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1d74KOkVXK1Vn3pZh2s2q7ogobgCtZ6xVsxa5b1zCph4/edit#gid=1191029306"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Request ID": "={{ $('Code in JavaScript').item.json.cleaned.requestId }}",
+            "Received At": "={{ $('Code in JavaScript').item.json.cleaned.receivedAt }}",
+            "Name": "={{ $('Code in JavaScript').item.json.cleaned.name }}",
+            "Email": "={{ $('Code in JavaScript').item.json.cleaned.email }}",
+            "Message": "={{ $('Code in JavaScript').item.json.cleaned.message }}",
+            "Source": "={{ $('Code in JavaScript').item.json.cleaned.source }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Request ID",
+              "displayName": "Request ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Message",
+              "displayName": "Message",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Source",
+              "displayName": "Source",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Received At",
+              "displayName": "Received At",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        832,
+        -96
+      ],
+      "id": "dba880cc-5791-4449-a30e-0e5db52f080f",
+      "name": "Append row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "bM5rJWjtx2N0tqwj",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {
+          "responseCode": 400,
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              }
+            ]
+          },
+          "responseKey": "={\n  \"status\": \"error\",\n  \"errors\": {{$json.errors}}\n}"
+        }
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        624,
+        96
+      ],
+      "id": "797e90ce-dd58-4a23-90e8-3f30303efe11",
+      "name": "Respond to False"
+    },
+    {
+      "parameters": {
+        "options": {
+          "responseCode": 200,
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              }
+            ]
+          },
+          "responseKey": "={\n  \"status\": \"success\",\n  \"message\": \"Payload accepted\",\n  \"requestId\": \"{{$json.cleaned.requestId}}\"\n}"
+        }
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        624,
+        -96
+      ],
+      "id": "13cb8598-74cc-4f9e-a931-edb2eee49b75",
+      "name": "Respond to True"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Respond to True",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Respond to False",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Respond to True": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "versionId": "a12f10e7-cef2-405c-9099-54774afdda87",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "c3ae1f15c1fd749e1ae1e7f13926191397e2c291d4f162c57f67ad7e54f784ff"
+  },
+  "id": "2Py7UyMMv2eBsnrUE2cvf",
+  "tags": []
+}
