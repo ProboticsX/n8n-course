@@ -1,0 +1,379 @@
+{
+  "name": "Course 2, Section 9: Professional LinkedIn Generator",
+  "nodes": [
+    {
+      "parameters": {
+        "formTitle": "LinkedIn Post Generator",
+        "formDescription": "Provide the details to create Captivating LinkedIn posts",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Email",
+              "fieldType": "email",
+              "placeholder": "Provide your email here"
+            },
+            {
+              "fieldLabel": "Post Topic",
+              "placeholder": "Enter your Post Topic"
+            },
+            {
+              "fieldLabel": "Target Audience",
+              "placeholder": "What audience this content is trying to target?"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.5,
+      "position": [
+        0,
+        0
+      ],
+      "id": "55e8643e-b2b1-4fab-904e-30c16d37ba36",
+      "name": "On form submission",
+      "webhookId": "e2dca33e-1713-4092-9035-32e4b331031c"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-5-mini",
+          "mode": "list",
+          "cachedResultName": "gpt-5-mini"
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        80,
+        208
+      ],
+      "id": "6f073103-b14b-4ac6-a839-9ae642c11d6d",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "qN5WZwKkRdIk7puB",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Post Topic: {{ $json['Post Topic'] }}\nTarget Audience: {{ $json['Target Audience'] }}",
+        "options": {
+          "systemMessage": "=** Purpose **\nCreate LinkedIn posts that are professional, insightful, and engaging — tailored to any topic and audience.\n** How It Works **\nWhenever you receive a topic, follow this process:\n1. Research\n- Use the Tavily tool to perform a real-time search.\n- Gather the most recent, credible, and relevant insights.\n- Focus on facts, stats, case studies, and trends that add value.\n2. Write the Post\n- Start with a strong hook to grab attention.\n- Use a professional, confident tone.\n- Make it clear and easy to read — short paragraphs, strong flow.\n- Prioritize educational and actionable insights.\n- Use emojis only when they truly add value (keep it minimal).\n- Add proper attribution (e.g., “according to [source]”).\n- End with a call to action: invite thoughts, feedback, or shares.\n- Include relevant, topic-specific hashtags to increase reach.\n** Output Rules **\nOutput only the final LinkedIn post description.\nDon’t explain the post or mention the steps taken.\nDon’t include quotation marks or formatting outside of what’s natural in the post.\n** Sample Use Case **\nTopic: The ROI of warehouse automation\n- You research the latest stats, success stories, and market trends.\n- Then, you craft a polished LinkedIn post with a hook, key data, expert insight, and a strong CTA.",
+          "passthroughBinaryImages": true
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        208,
+        0
+      ],
+      "id": "41cb3945-dcab-4e18-bd4e-7fe7b062a215",
+      "name": "LinkedIn Post Description AI Agent"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=LinkedIn Post:\n{{ $json.output }}",
+        "options": {
+          "systemMessage": "=** Purpose **\n- You are an AI agent designed to convert LinkedIn posts into visual prompt descriptions.\nThese prompts guide the creation of compelling marketing graphics that visually\nenhance the written message and align with professional branding standards.\n** Goals **\n- Analyze the content of the LinkedIn post\n- Identify the core message, insight, or idea\n- Craft a visual prompt that represents the message in a striking and brand-consistent way\n- Ensure the prompt is ideal for generating a professional marketing-style graphic, not a literal or hyperrealistic image\n** Visual Criteria **\nYour graphic prompt must:\n- Visually support or represent the key idea from the post\n- Be suitable for a modern LinkedIn post (clean, professional, polished)\n- Reflect a current design aesthetic (flat, minimalist, creative, sharp)\n** Output Requirements **\n- Output only the final image prompt — no explanation, rephrasing of the post, or surrounding text\n- Never include placeholders like \"Header goes here\"\n- Include numeric stats or figures if present in the original post\n- Do not include quotation marks around the prompt\n- Output should be ready to use in a text-to-image tool\n** Design Style & Elements **\nThink like a professional brand designer or marketing creative. Your visual prompts may include:\n- Flat illustrations\n- Bold or minimal typography elements (described in the prompt)\n- Infographic components (charts, graphs, percentages)\n- Modern abstract shapes or gradients\n- Metaphors (e.g., lightbulb for ideas, mountain for growth)\n- Layout suggestions (e.g., “split-screen layout,” “centered title with subtle overlay”)\nOptional: soft shadows, motion-like lines, UI-style elements\n** Prompt Format Example **\nModern flat-design illustration of a glowing lightbulb emerging from a maze, symbolizing innovation through complexity.\nClean background with soft gradient, top-right space for headline text, subtle data overlay on the left side."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        560,
+        0
+      ],
+      "id": "17d51816-c96c-451a-81bd-9d106c9469b9",
+      "name": "Image Prompt AI Agent"
+    },
+    {
+      "parameters": {
+        "toolDescription": "Use this tool to search the web",
+        "method": "POST",
+        "url": "https://api.tavily.com/search",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n\"query\": \"{{ $json['Post Topic'] }}\",\n\"topic\": \"general\",\n\"search_depth\": \"advanced\",\n\"chunks_per_source\": 3,\n\"max_results\": 1,\n\"time_range\": null,\n\"days\": 7,\n\"include_answer\": true,\n\"include_raw_content\": false,\n\"include_images\": false,\n\"include_image_descriptions\": false,\n\"include_domains\": [],\n\"exclude_domains\": []\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.3,
+      "position": [
+        368,
+        208
+      ],
+      "id": "c2ee73e9-9557-4b85-b3bb-71ddf28c607d",
+      "name": "Web Search",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "LLFySBg7ABDswGLV",
+          "name": "Header Auth account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Description:  {{ $json.output }}",
+        "options": {
+          "systemMessage": "** Overview **\nYour job is to create a clear & highly engaging title for the linkdein post based on it's description."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        912,
+        0
+      ],
+      "id": "3350b835-ff92-4e50-8b59-3f6bcff9c16a",
+      "name": "Generate Title AI Agent"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.openai.com/v1/images/generations",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer API_KEY"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "model",
+              "value": "gpt-image-1.5"
+            },
+            {
+              "name": "prompt",
+              "value": "={{ $('Image Prompt AI Agent').item.json.output }}"
+            },
+            {
+              "name": "size",
+              "value": "1024x1024"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        1264,
+        0
+      ],
+      "id": "f41a67f1-fd4f-4098-b9ad-be2a02851975",
+      "name": "Generate Image"
+    },
+    {
+      "parameters": {
+        "operation": "toBinary",
+        "sourceProperty": "data[0].b64_json",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.convertToFile",
+      "typeVersion": 1.1,
+      "position": [
+        1472,
+        0
+      ],
+      "id": "6092f1c1-74cc-4f8b-9801-478df0ab0abd",
+      "name": "Convert to File"
+    },
+    {
+      "parameters": {
+        "name": "={{ $('Generate Title AI Agent').item.json.output }}",
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "1XqqRmTCHAyb_h5HZlvJ9onQ6Gx3XUB2N",
+          "mode": "list",
+          "cachedResultName": "n8n",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/1XqqRmTCHAyb_h5HZlvJ9onQ6Gx3XUB2N"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        1680,
+        0
+      ],
+      "id": "61848fa2-30e6-4983-867c-f00344203e1f",
+      "name": "Upload file",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "mkv6ZLI1004vgGTh",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('On form submission').item.json.Email }}",
+        "subject": "Your LinkedIn Post is Published!",
+        "emailType": "text",
+        "message": "=Here are the details of your LinkedIn Post:\n\nTitle: {{ $('Generate Title AI Agent').item.json.output }}\nDescription: {{ $('LinkedIn Post Description AI Agent').item.json.output }}\nImage URL: {{ $json.webViewLink }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1888,
+        0
+      ],
+      "id": "ac9bced3-02b4-4f1d-af22-8d488d161442",
+      "name": "Send a message",
+      "webhookId": "fbfbf1db-7441-410d-bccd-e9bff13b849e",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "kNKjF2YVUlmEVFnf",
+          "name": "Gmail account 2"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "On form submission": {
+      "main": [
+        [
+          {
+            "node": "LinkedIn Post Description AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "LinkedIn Post Description AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "Image Prompt AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "Generate Title AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "LinkedIn Post Description AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Image Prompt AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Web Search": {
+      "ai_tool": [
+        [
+          {
+            "node": "LinkedIn Post Description AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Image Prompt AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Generate Title AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Title AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Generate Image",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Image": {
+      "main": [
+        [
+          {
+            "node": "Convert to File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Convert to File": {
+      "main": [
+        [
+          {
+            "node": "Upload file",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upload file": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "versionId": "d83a72b9-acf6-4b14-8253-35e37f91f40b",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "c3ae1f15c1fd749e1ae1e7f13926191397e2c291d4f162c57f67ad7e54f784ff"
+  },
+  "id": "KZcSaJLRZJSDwxoVVfnto",
+  "tags": []
+}
