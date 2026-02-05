@@ -4,4 +4,5 @@ A production-ready n8n workflow that validates inbound leads, uses AI to score a
 Built with strict guardrails, structured AI output, and human-in-the-loop design to prevent noise and automation failures.  
 Designed for real-world SaaS, agency, and founder-led sales pipelines.
 
-Medium Article: 
+Medium Article: https://medium.com/@jainshubham0403/how-i-built-an-ai-powered-lead-qualification-routing-system-in-n8n-production-ready-695c974555e3
+
